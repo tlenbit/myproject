@@ -1,0 +1,9 @@
+*.log
+*.sql
+*.sqlite
+
+*.pyc
+*.swp
+*.bak
+
+local_settings.py
