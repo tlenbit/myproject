@@ -24,8 +24,8 @@ class Genre(models.Model):
 class Track(models.Model):
     title = models.CharField(max_length=256)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-    genre = models.ManyToManyField(Genre)
-    lyrics = models.CharField(max_length=16384, default='')
+    genres = models.ManyToManyField(Genre)
+    lyrics = models.CharField(max_length=16384, blank=True)
 
     def __str__(self):
         return self.title
@@ -37,7 +37,7 @@ class Track(models.Model):
 class Room(models.Model):
     name = models.CharField(max_length=256)
     playlist_tracks = models.ManyToManyField(
-        Track, through='Playlist_track')
+        Track, through='Playlist_entry')
 
     def __str__(self):
         return self.name
@@ -46,10 +46,10 @@ class Room(models.Model):
         db_table = 'rooms'
 
 
-class Playlist_track(models.Model):
+class Playlist_entry(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     votes = models.IntegerField()
 
     class Meta:
-        db_table = 'playlist_tracks'
+        db_table = 'playlist_entry'
