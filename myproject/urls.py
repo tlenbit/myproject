@@ -17,6 +17,9 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'rooms/', include('rooms.urls')),
+    url(r'^register/$', views.register, name='register'),
+    url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^rooms/', include('rooms.urls')),
     url(r'^admin/', admin.site.urls),
 ]

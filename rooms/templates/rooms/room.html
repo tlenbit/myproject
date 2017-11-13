@@ -1,0 +1,25 @@
+{% extends "rooms/base.html" %}
+
+{% block title %}
+    rooms title
+{% endblock %}
+
+{% block body %}
+    <script>
+        socket = new WebSocket("ws://" + window.location.host + "/chat/");
+        socket.onmessage = function(e) {
+            document.getElementById("test").innerHTML = JSON.parse(e.data).key1;
+        }
+        socket.onopen = function() {
+            socket.send(Math.floor(Math.random() * 100) + 1  );
+        }
+        // Call onopen directly if socket is already open
+        if (socket.readyState == WebSocket.OPEN) socket.onopen();
+    </script>
+    <div id="test">init</div>
+    <ul>
+        {% for entry in playlist_entries_list %}
+            <li>Rating: {{ entry.rating }} Title: {{ entry.track.title }}</li>
+        {% endfor %}
+    </ul>
+{% endblock  %}

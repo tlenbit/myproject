@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Artist(models.Model):
     name = models.CharField(max_length=256)
@@ -49,7 +49,7 @@ class Room(models.Model):
 class Playlist_entry(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
-    votes = models.IntegerField()
+    rating = models.IntegerField()
 
     class Meta:
         db_table = 'playlist_entry'
