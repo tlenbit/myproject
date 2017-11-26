@@ -1,0 +1,22 @@
+{% extends "rooms/base.html" %}
+
+{% block body %}
+<div class="login-register-container">
+<div class="login-register">
+	<div class="register-form">
+	<form action="{% url 'rooms:register' %}" method="POST">
+		{% csrf_token %}
+		{{ register_form.as_p }}
+		<input type="submit">
+	</form>
+	</div>
+	<div class="login-form">
+	<form action="{% url 'rooms:login' %}" method="POST">
+		{% csrf_token %}
+		{{ login_form.as_p }}
+		<input type="submit">
+	</form>
+	</div>
+</div>
+</div>
+{% endblock %}

@@ -1,9 +1,17 @@
 from django.contrib import admin
 
-from rooms.models import Room, Track, Genre, Artist
+from rooms.models import Artist, Genre, Playlist_entry, Room, Track
 
 
-admin.site.register(Room)
-admin.site.register(Track)
-admin.site.register(Genre)
-admin.site.register(Artist)
+@admin.register(Track)
+class RoomsAdmin(admin.ModelAdmin):
+    raw_id_fields = ('genres', 'artist', )
+
+@admin.register(Playlist_entry)
+class PlaylistAdmin(admin.ModelAdmin):
+    raw_id_fields = ('room', 'track', )
+
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    raw_id_fields = ('playlist_tracks', )
+

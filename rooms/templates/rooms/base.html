@@ -2,9 +2,35 @@
 	<head>
 		<title>
 			{% block title %}
-			my title
+			lalala
 			{% endblock %}
 		</title>
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+		<script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+		<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+		<script src="{% static 'js/infinite.min.js' %}"></script>
+		<script src="{% static 'js/react.js' %}"></script>
+		<script src="{% static 'js/react-dom.js' %}"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.js"></script>
+		{% if request.user.is_authenticated %}
+		<div class="header-container">
+			<div class="home">
+                        	<a href="{% url 'rooms:index' %}">home</a>
+               		</div>
+			{% block greetings %}
+			<div class="username">
+			{{ request.user.username }}
+			</div>
+			{% endblock %}
+				
+			{% block logout %}
+			<div class="logout">
+				<a href="{% url 'rooms:logout' %}">logout</a>
+			</div>
+		</div>
+		{% endblock %}
+		{% endif %}
 	</head>
 	<body>
 		{% block body %}

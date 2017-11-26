@@ -3,7 +3,7 @@ from rooms.consumers import ws_message, ws_add, ws_disconnect
 
 
 channel_routing = [
-    route('websocket.receive', ws_message),
-    route('websocket.connect', ws_add),
-    route('websocket.disconnect', ws_disconnect),
+    route('websocket.connect', ws_add, path=r'^/rooms/(?P<room_name>[\w]+)/$'),
+    route('websocket.receive', ws_message, path=r'^/rooms/(?P<room_name>[\w]+)/$'),
+    route('websocket.disconnect', ws_disconnect, path=r'^/rooms/(?P<room_name>[\w]+)/$'),
 ]

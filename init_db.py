@@ -20,16 +20,16 @@ rooms_list = []
 track_genre_list = []
 playlist_entries_list = []
 
-for i in range(0,100):
+for i in range(0,1000):
     genres_list.append(Genre(name='genre'+str(i)))
 
 for i in range(0, 10000):
     rooms_list.append(Room(name='room'+str(i)))
 
-for i in range(0, 1000):
+for i in range(0, 100000):
     artists_list.append(Artist(name='artist'+str(i)))
 
-print('Created 100 genres, 10 000 rooms, 1 000 artists models... ' + str(time()-t) )
+print('Created 1 000 genres, 10 000 rooms, 100 000 artists models... ' + str(time()-t) )
 t = time()
 
 # create genre, room, artists BEFORE using 
@@ -65,19 +65,14 @@ ThroughModel.objects.bulk_create(track_genre_list)
 print('Created 100 000 track-genre models and db rows...' + str(time()-t) )
 t = time()
 
-#for i in range(0, 10000):
-#    rooms_list.append(Room(name='room'+str(i)))
-
-#Room.objects.bulk_create(rooms_list)
-
 for room in rooms_list:
-    for j in range(0, 50):
+    for j in range(0, 100):
         track = random.choice(tracks_list)
         playlist_entries_list.append(
-            Playlist_entry(room=room, track=track, rating=random.randint(0,100)))
+            Playlist_entry(room=room, track=track))
 
 Playlist_entry.objects.bulk_create(playlist_entries_list)
 
-print('Created 500 000 playlist_entry models and db rows ' + str(time()-t) )
+print('Created 1 000 000 playlist_entry models and db rows ' + str(time()-t) )
 
 print('Time elapsed: ' + str(time()-start))

@@ -1,0 +1,73 @@
+body {
+	background: #FBF9FF;
+}
+
+.login-register-container {
+	display: flex;
+}
+
+.login-register {
+	display: flex;
+	background: #F1ECFF;
+	max-width: 400px;
+	max-height: 800px;
+	margin: 15% auto auto auto;
+	flex-direction: column;
+	align-items: center;
+}
+
+.main-grid-container {
+	display: grid;
+	grid-template-columns: 25% 40% 25%;
+	grid-template-rows: 40;
+	grid-column-gap: 1%;
+	grid-row-gap: 1%;
+	grid-template-areas: 
+	                     "header header header"
+	                     "left center right";
+        justify-content: space-evenly;
+}
+
+.header-container {
+	height: 50px;
+	grid-area: header;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+.logout {
+	background: #E6FCFF;
+	flex-grow: 1;
+	text-align: center;
+}
+
+.home {
+	background: #E6FCFF;
+	flex-grow: 1;
+	text-align: center;
+}
+
+.username {
+	background: #E6FCFF;
+	flex-grow: 1;
+	text-align: center;
+}
+
+.search-room-form {
+	background: #E6FCFF;
+	grid-area: center;
+}
+
+.new-room-form {
+	grid-area: center;
+}
+
+.infinite-container {
+	background: #E6FCFF;
+	grid-area: right;
+	text-align: center;
+}
+
+
+

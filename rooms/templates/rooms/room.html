@@ -1,25 +1,262 @@
 {% extends "rooms/base.html" %}
 
 {% block title %}
-    rooms title
+{{ room.name }}
 {% endblock %}
 
 {% block body %}
-    <script>
-        socket = new WebSocket("ws://" + window.location.host + "/chat/");
+<!-- REALIZATION VIA DJANGO TEMPLATES ! ! ! REFRESH PAGE TO UPDATE INFO, BAAAAD
+
+    Tracks in da room:
+    <div class="playlist" id="playlist">
+    <ul>
+        {% for entry in playlist_entries_list %}
+            <p>
+	    <input type="submit" track_id="{{ entry.track.id }}" onclick="vote_up(5);" value="up"/>
+	    Rating: {{ entry.rating }} Title: {{ entry.track.title }}
+	    </p>
+        {% endfor %}
+    </ul>
+	    
+    </div>
+    Users in da room:
+    <div class="users" id="users">
+	    
+	{% for user in room.users.all %}
+	    <p>
+	    {{ user }}
+	    </p>
+	{% endfor %}
+	    
+    </div>
+    Chat:
+    <div class="chat" id="chat">
+    </div>
+    <input id="input_chat_message">
+    <input type="button" onclick="send_chat_message(getElementById('input_chat_message').value)" value="send">
+-->
+
+<!-- REALIZATION VIA PURE JAVASCRIPT ! ! ! TOO COMPLICATED AND REDUNDANT
+<script>
+
+	// keys are names, values are {}s with properties
+	var playlist_entries = [];
+        var users = [];
+
+        socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
+
         socket.onmessage = function(e) {
-            document.getElementById("test").innerHTML = JSON.parse(e.data).key1;
+	    // info on new users and tracks votes comes through ws messages
+	    let parsed_data = JSON.parse(e.data);
+	    // for array sorting, 1: ascending, -1: descending
+	    key = 'rating'
+	    let order = -1;
+	    if ('playlist_entries' in parsed_data) {
+	        playlist_entries = sortArrayByKey(parsed_data['playlist_entries'], key, order);
+	        update_playlist();
+            }
+	    if ('users' in parsed_data) {
+	        users = parsed_data['users'];
+                update_users();
+	    }
+	    if ('chat_message' in parsed_data) {
+	        income_chat_message = parsed_data['chat_message'];
+	    	update_chat(income_chat_message);
+	    }
+            //send_chat_message('HELLO MOTHERFUCKER');
         }
-        socket.onopen = function() {
-            socket.send(Math.floor(Math.random() * 100) + 1  );
+        socket.onopen = function(e) {
+            //socket.send(Math.floor(Math.random() * 100) + 1  );
         }
         // Call onopen directly if socket is already open
         if (socket.readyState == WebSocket.OPEN) socket.onopen();
+
+        // U or D - up or down
+        function vote(track_title, U_or_D) {
+            info = {}
+            info["vote_on_track"] = {}
+	    info["vote_on_track"]["track_title"] = track_title
+            info["vote_on_track"]["U_or_D"] = U_or_D
+	    socket.send(JSON.stringify(info));
+	}
+
+        function send_chat_message(message) {
+		info = {}
+		info['chat_message'] = message
+		socket.send(JSON.stringify(info));
+	}
+
+        function update_chat(message) {	
+		chat = document.getElementById("chat");
+		para = document.createElement("P");
+		para.appendChild(document.createTextNode(message));
+		chat.appendChild(para);
+        }
+
+        function update_playlist() {
+	    var info, i, para;
+            document.getElementById("playlist").innerHTML = "";
+            for (i in playlist_entries) {
+	        para = document.createElement("P");
+		track_title = playlist_entries[i]['title'];
+	        //title = document.createTextNode(playlist_entries[i]['title']);
+          	info = document.createTextNode(
+			'Rating: '+
+			playlist_entries[i]['rating']+
+			'Title: '+
+			track_title);
+		vote_down_button = document.createElement("input");
+                vote_down_button.setAttribute("value", "down");
+		vote_down_button.setAttribute("type", "button");
+                // IS THIS OK???
+                vote_up_button = createButton("UP", "vote('" + track_title + "', 'U')");
+                vote_down_button = createButton("DOWN", "vote('" + track_title + "', 'D')");
+                para.appendChild(vote_up_button);
+                para.appendChild(vote_down_button);
+		para.appendChild(info);
+                document.getElementById("playlist").appendChild(para);
+	    }
+	}
+
+        function createButton(value, onclick) {
+		button = document.createElement("input");
+		button.setAttribute("value", value);
+		button.setAttribute("type", "button");
+		button.setAttribute("onclick", onclick);
+		return button
+	}
+
+	function update_users() {
+	    var info, i, para;
+            document.getElementById("users").innerHTML = "";
+	    for (i in users) {
+                para = document.createElement("P");        
+	        info = document.createTextNode(users[i]['name']);
+                para.appendChild(info);
+                document.getElementById("users").appendChild(para);
+	    }
+	}
+
+	function sortArrayByKey(array, key, asc) {
+            return array.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1*asc : ((x > y) ? 1*asc : 0));
+        });
+}
+
+</script>
+-->
+
+<div id="root">
+</div>
+
+<script type="text/babel">
+
+    var playlistEntries = [];
+
+    var usersList = [];
+
+    var socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
+
+    socket.onmessage = function(e) {
+	// info on new users and tracks votes comes through ws messages
+	let parsedData = JSON.parse(e.data);
+	if ('playlist_entries' in parsedData) {
+	    playlistEntries = parsedData['playlist_entries'];
+        }
+	if ('users' in parsedData) {
+	    usersList = parsedData['users'];
+	}
+	if ('chat_message' in parsedData) {
+	    incomeChatMessage = parsedData['chat_message'];
+	}
+        ReactDOM.render(
+            <Room />,
+            document.getElementById('root')
+        );
+    }
+
+    socket.onopen = function(e) {
+        //socket.send(Math.floor(Math.random() * 100) + 1  );
+    }
+
+    // Call onopen directly if socket is already open
+    if (socket.readyState == WebSocket.OPEN) socket.onopen();
+  
+    class UsersList extends React.Component {
+        render() {
+	    const rows = this.props.usersList.map((user) =>
+	        <p key={user.name}>
+		    {user.name}
+		</p>
+            );
+	    return (
+		<div id="users">
+		Users in da room:
+		    {rows}
+		</div>
+	    );
+	}
+    }
+    
+    class VoteButton extends React.Component {
+        constructor(props) {
+            super(props);
+            this.voteForTrack = this.voteForTrack.bind(this);
+	    this.UP_or_DOWN = this.props.U_or_D == "U" ? "UP" : "DOWN";
+        }
+        voteForTrack() {
+            var info = {};
+            info["vote_on_track"] = {};
+	    info["vote_on_track"]["track_title"] = this.props.track_title;
+            info["vote_on_track"]["U_or_D"] = this.props.U_or_D;
+	    socket.send(JSON.stringify(info));
+        }
+        render() {
+	    return (
+		<input type="button" value={this.UP_or_DOWN} onClick={this.voteForTrack} />
+	    );
+	}
+    }
+
+    class Playlist extends React.Component {
+	render() {
+	    const rows = this.props.playlistEntries
+	        .sort((a, b) => {
+                    var x = a.rating; var y = b.rating;
+                    return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+                })
+	        .map((entry) => 
+		        <p key={entry.title}>
+		            <VoteButton track_title={entry.title} U_or_D="U" />
+		            <VoteButton track_title={entry.title} U_or_D="D" />
+                            {entry.rating} {entry.title}
+		        </p>
+	        );
+	    return (
+	        <div id="playlist">
+		    {rows}
+	        </div>
+	    );
+	}
+    }
+
+    class Room extends React.Component {
+        render() {
+	    return (
+	        <div>
+	            <Playlist playlistEntries={playlistEntries} />
+		    <UsersList usersList={usersList} />
+		</div>
+	    );
+	}
+    }
+
+    ReactDOM.render(
+        <Room />,
+        document.getElementById('root')
+    );
+
     </script>
-    <div id="test">init</div>
-    <ul>
-        {% for entry in playlist_entries_list %}
-            <li>Rating: {{ entry.rating }} Title: {{ entry.track.title }}</li>
-        {% endfor %}
-    </ul>
-{% endblock  %}
+
+{% endblock %}

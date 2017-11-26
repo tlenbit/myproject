@@ -1,0 +1,42 @@
+{% extends "rooms/base.html" %}
+
+
+{% block body %}
+<div class="main-grid-container">
+	<div class="search-room-form">
+		<form method="POST">
+			{% csrf_token %}
+			{{ search_room_form.as_p }}
+			{{ form.errors }}
+			<input type="submit" value="enter">
+		</form>
+	</div>
+	<div class="new-room-form">
+		<form action="{% url 'rooms:new_room' %}" method="GET">
+			<input type="submit" value="new room">
+		</form>
+	</div>
+	<div class="infinite-container">
+		{% for room in rooms %}
+		<div class="infinite-item">
+			<p> <a href="{% url 'rooms:room' room_name=room.name %}"> {{ room.name }}</a> </p>
+		</div>
+		{% endfor %}
+	</div>
+	<div class="loading" style="display: none;">
+	    Loading...
+	</div>
+	<a class="infinite-more-link" href="?page={{ rooms.next_page_number }}"></a>
+</div>
+<script>
+    var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+      onBeforePageLoad: function () {
+        $('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+        $('.loading').hide();
+      }
+    });
+</script>
+{% endblock %}
