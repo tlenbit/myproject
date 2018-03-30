@@ -63,6 +63,7 @@ def ws_message(message, room_name):
                 room,
                 processed_message['playlist']['add_entry']['artist_id'],
                 processed_message['playlist']['add_entry']['track_id'],
+                message.user
             )
             update_info(room)
     if processed_message.get('search', None):
@@ -85,17 +86,13 @@ def ws_message(message, room_name):
             info['search']['track_suggestions'] = track_suggestions
             message.reply_channel.send({"text": "%s" % json.dumps(info)})
 
-#def print_sql_queries():
-#    for query in connection.queries:
-#        time = float(query['time'])
-#        if time > 1:
-#            print(query)
 
 def suggest_artists(partial_artist_name, track_choice):
     RESULTS_LEN = 10
-    #print_sql_queries()
     query_params = make_query_params(partial_artist_name)
     if track_choice:
+        # if partial artist name is not empty use FTS
+        # else just filter by track choice
         if query_params != '':
             result_query_set = Artist.objects.extra(
                 where=['''to_tsvector('simple',name)@@to_tsquery('simple',%s)'''], 
@@ -108,10 +105,12 @@ def suggest_artists(partial_artist_name, track_choice):
                 track__title=track_choice
             )[:RESULTS_LEN]
     else:
-        result_query_set = Artist.objects.extra(
-            where=['''to_tsvector('simple',name)@@to_tsquery('simple',%s)'''], 
-            params=[query_params]
-        )[:RESULTS_LEN]
+        # dont search short strings, it takes time and it is irrelevant
+        if len(partial_artist_name)>2:
+            result_query_set = Artist.objects.extra(
+                where=['''to_tsvector('simple',name)@@to_tsquery('simple',%s)'''], 
+                params=[query_params]
+            )[:RESULTS_LEN]
     return [
             { 'value': artist.id, 'label': artist.name }
             for artist in result_query_set
@@ -131,8 +130,9 @@ def make_query_params(search_string):
 
 def suggest_tracks(partial_track_title, artist_choice):
     RESULTS_LEN = 10
-    #print_sql_queries()
     query_params = make_query_params(partial_track_title)
+    # if partial track title is not empty use FTS
+    # else just filter by artist choice
     if artist_choice:
         if query_params != '':
             result_query_set = Track.objects.extra(
@@ -146,10 +146,12 @@ def suggest_tracks(partial_track_title, artist_choice):
                 artist__name=artist_choice
             )[:RESULTS_LEN]
     else:
-        result_query_set = Track.objects.extra(
-            where=['''to_tsvector('simple',title)@@to_tsquery('simple',%s)'''], 
-            params=[query_params]
-        )[:RESULTS_LEN]
+        # dont search short strings, it takes time and it is irrelevant
+        if len(partial_track_title)>2:
+            result_query_set = Track.objects.extra(
+                where=['''to_tsvector('simple',title)@@to_tsquery('simple',%s)'''], 
+                params=[query_params]
+            )[:RESULTS_LEN]
     return [
             { 'value': track.id, 'label': track.title }
             for track in result_query_set
@@ -163,13 +165,17 @@ def set_next_playing_entry(room):
     room.playing_entry = top_rated_entry
     room.save()
 
-def add_playlist_entry(room, artist_id, track_id):
+def add_playlist_entry(room, artist_id, track_id, user):
+    # add entry and vote for it automatically
     artist = Artist.objects.get(id=artist_id)
     track = Track.objects.get(id=track_id)
     entry = Playlist_entry.objects.create(room=room, track=track)
     entry.save()
-    #if room.playlist_entry_set.count() == 0:
-    #    set_next_playing_entry(room)
+    vote(user,
+         entry.id,
+         'U'
+    )
+    update_info(room)
 
 def get_top_rated_playlist_entry(room):
     entries = Playlist_entry.objects.filter(room=room)
@@ -231,10 +237,10 @@ def get_youtube_video_url(search_query):
         'order=relevance&'\
         'key=AIzaSyAt3bJIrzSxR1crhuLBwXDm5qTfgm2wzBw'
     #print(query_url)
-    response_data = json.loads(requests.get(query_url).text)
     #if response_data['pageInfo']['totalResults'] != 0:
     #print(response_data)
     try:
+        response_data = json.loads(requests.get(query_url).text)
         video_id = response_data['items'][0]['id']['videoId']
         return 'https://www.youtube.com/watch?v='+video_id
     except:
