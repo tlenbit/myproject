@@ -1,9 +1,8 @@
-from django.db import models
+from django.db import models, migrations
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
 
 class Activity(models.Model):
     VOTE_UP = 'U'
@@ -22,50 +21,44 @@ class Activity(models.Model):
     content_object = GenericForeignKey()
 
     class Meta:
-        db_table = 'activities'
+        db_table = 'activity'
         unique_together = ['content_type', 'object_id', 'user']
-
-class Artist(models.Model):
-    name = models.CharField(max_length=256)
-    
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        db_table = 'artists'
-
-class Genre(models.Model):
-    name = models.CharField(max_length=256)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        db_table = 'genres'
 
 class Track(models.Model):
     title = models.CharField(max_length=256)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-    genres = models.ManyToManyField(Genre)
-    lyrics = models.CharField(max_length=16384, blank=True)
 
     def __str__(self):
         return self.title
 
     class Meta:
-        db_table = 'tracks'
+        db_table = 'track'
+
+class Artist(models.Model):
+    name = models.CharField(max_length=256)
+    track = models.ManyToManyField(Track)
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'artist'
 
 class Room(models.Model):
     name = models.CharField(max_length=256, unique=True)
     playlist_tracks = models.ManyToManyField(
         Track, through='Playlist_entry')
     users = models.ManyToManyField(User)
+    playing_entry = models.OneToOneField(
+        'Playlist_entry', 
+        on_delete=models.SET_NULL, 
+        related_name='+',
+        null=True
+    )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        db_table = 'rooms'
+        db_table = 'room'
 
 class Playlist_entry(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -84,5 +77,5 @@ class Playlist_entry(models.Model):
     #    return track.title
 
     class Meta:
-        db_table = 'playlist_entries'
+        db_table = 'playlist_entry'
 

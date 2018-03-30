@@ -1,20 +1,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import auth
 from django.urls import reverse
 from django.views.generic.list import ListView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django import forms
+from django.forms.widgets import PasswordInput, TextInput
 
-from rooms.models import Playlist_entry, Room, User
-from rooms.forms import SearchRoomForm, RoomForm
+from rooms.models import Playlist_entry, Room, User, Artist
+from rooms.forms import SearchRoomForm, RoomForm, CustomAuthForm, CustomUserCreationForm
 
 import random
 
-# '/login' '/register' '/' - same page. is it ok?
+
 def login(request):
-    form = AuthenticationForm(data=request.POST)
+    form = CustomAuthForm(data=request.POST)
     if form.is_valid():
         user = auth.authenticate(
             request, 
@@ -27,19 +28,19 @@ def login(request):
     else:
         context = {
             'login_form': form,
-            'register_form': UserCreationForm()
+            'register_form': CustomUserCreationForm()
         }
         return render(request, 'rooms/register_or_login.html', context)
 
 def register(request):
-     form = UserCreationForm(request.POST)
+     form = CustomUserCreationForm(request.POST)
      if form.is_valid():
          user = form.save()
          auth.login(request, user)
          return redirect(reverse('rooms:index'))
      else:
          context = {
-             'login_form': AuthenticationForm(),
+             'login_form': CustomAuthForm(),
              'register_form': form
          }
          return render(request, 'rooms/register_or_login.html', context)
@@ -87,8 +88,8 @@ def index(request):
         return search_room(request)
     else:
         context = {
-            'login_form': AuthenticationForm(),
-            'register_form': UserCreationForm()
+            'login_form': CustomAuthForm(),
+            'register_form': CustomUserCreationForm()
         }
         return render(request, 'rooms/register_or_login.html', context)
 
@@ -114,18 +115,25 @@ def new_room(request):
 def room(request, room_name):
     room = get_object_or_404(Room, name=room_name)
     playlist_entries_list = Playlist_entry.objects.filter(room=room)
-    context = {
-        'playlist_entries_list': playlist_entries_list,
-        'room': room
-    }
-    return render(request, 'rooms/room.html', context)
+    return render(request, 'rooms/room.html', { 'room': room })
 
 @login_required
 def room_admin(request, room_name):
-    return HttpResponse('Admin panel of room %s: ' % room_name)
+    room = get_object_or_404(Room, name=room_name)
+    playlist_entries_list = Playlist_entry.objects.filter(room=room)
+    return render(request, 'rooms/room_admin.html', { 'room': room })
 
-#class RoomsView(ListView):
-#    model = Room
-#    paginate_by = 10
-#    context_object_name = 'rooms'
-#    template_name = 'rooms/search_or_create_room.html'
+@login_required
+def suggest_artist_names(request):
+    response = []
+    artist_name = request.GET.get('artist_name','')
+    for artist in Artist.objects.filter(name__startswith=artist_name)[:7]:
+        response.append(artist.name)
+    return JsonResponse(response, safe=False)
+
+def check_username(request):
+    response = {}
+    username = request.GET.get('username', '')
+    response['username'] = username
+    response['exists'] = User.objects.filter(username=username).exists()
+    return JsonResponse(response)

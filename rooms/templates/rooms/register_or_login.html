@@ -1,22 +1,62 @@
 {% extends "rooms/base.html" %}
 
 {% block body %}
-<div class="login-register-container">
 <div class="login-register">
 	<div class="register-form">
 	<form action="{% url 'rooms:register' %}" method="POST">
 		{% csrf_token %}
-		{{ register_form.as_p }}
-		<input type="submit">
+		<p id="login-username-form" class='has-feedback'>
+			{{ register_form.username }}
+			<span id="login-username-icon" aria-hidden="true"></span>
+		</p>
+		<p>
+			{{ register_form.password1  }}
+		</p>
+		<p>
+			{{ register_form.password2 }}
+		</p>
+		<input type="submit" value="Sign up" class="btn btn-primary btn-block" />
 	</form>
 	</div>
 	<div class="login-form">
 	<form action="{% url 'rooms:login' %}" method="POST">
 		{% csrf_token %}
 		{{ login_form.as_p }}
-		<input type="submit">
+		<input type="submit" value="Log in" class="btn btn-primary btn-block" />
 	</form>
 	</div>
 </div>
-</div>
+<script>
+onload = function() {
+	    var input = document.getElementById('register-username-input');
+	    input.oninput = function() {
+            if (input.value == '') {
+	        document.getElementById("login-username-form").className = 'has-feedback';
+	        document.getElementById("login-username-icon").className = 'glyphicon form-control-feedback';
+	    }
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', '/rooms/ajax/check_username?username='+input.value, true);
+	    xhr.onreadystatechange = () => {
+		if (xhr.readyState != 4) return;
+		if (xhr.status != 200) {
+                    console.log(xhr.status + ': ' + xhr.statusText);
+                } else {
+		    let user = JSON.parse(xhr.responseText)
+                    if ( user.exists == true) {
+		        //alert('username ' + user.username + ' is already taken');
+                        document.getElementById("login-username-form").className = 'has-error has-feedback';
+			document.getElementById("login-username-icon").className = 'glyphicon glyphicon-remove form-control-feedback';
+		    }
+		    else {
+			document.getElementById("login-username-form").className = 'has-success has-feedback'
+			document.getElementById("login-username-icon").className = 'glyphicon glyphicon-ok form-control-feedback';
+		    }
+	        }
+	    }
+            if (input.value != '') {
+                xhr.send();
+	    }
+	}
+}
+</script>
 {% endblock %}

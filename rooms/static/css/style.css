@@ -1,73 +1,135 @@
 body {
-	background: #FBF9FF;
+	display: flex;
+	flex-direction: column;
 }
 
 .login-register-container {
 	display: flex;
 }
-
 .login-register {
+	background: #ECF4FF;
 	display: flex;
-	background: #F1ECFF;
-	max-width: 400px;
-	max-height: 800px;
+	width: 330px;
+	height: 480px;
 	margin: 15% auto auto auto;
 	flex-direction: column;
 	align-items: center;
 }
-
-.main-grid-container {
-	display: grid;
-	grid-template-columns: 25% 40% 25%;
-	grid-template-rows: 40;
-	grid-column-gap: 1%;
-	grid-row-gap: 1%;
-	grid-template-areas: 
-	                     "header header header"
-	                     "left center right";
-        justify-content: space-evenly;
+.register-form {
+	margin: auto;
+}
+.login-form {
+	margin: auto;
 }
 
+input {
+   text-align:center;
+}
+
+.main-container {
+	background: #F9F9FF;
+	flex-grow: 1;
+	/**/
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 .header-container {
+	background: #D0E6FF;
 	height: 50px;
-	grid-area: header;
+	width: 90%;
+	max-width: 700px;
+	/**/
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	margin: 10px;
+}
+.header-item {
+	background: #ECF4FF;
+	/**/
+	display: flex;
+	width: 150px;
+	height: 30px;
+}
+.logout {
+	margin: auto;
+}
+.home {
+	margin: auto;
+}
+.username {
+	margin: auto;
+}
+
+.content-container {
+	width: 100%;
+	/**/
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
+	flex-wrap: wrap;
 }
-
-.logout {
-	background: #E6FCFF;
-	flex-grow: 1;
-	text-align: center;
+.search-or-enter-container {
+	flex-basis: 450px;
+	/**/
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
-
-.home {
-	background: #E6FCFF;
-	flex-grow: 1;
-	text-align: center;
+.search-and-new-forms {
+	background: #ECF4FF;
+	margin: 15% auto auto auto;
+	width: 400px;
+	height: 250px;
+	/**/
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
 }
-
-.username {
-	background: #E6FCFF;
-	flex-grow: 1;
-	text-align: center;
-}
-
 .search-room-form {
-	background: #E6FCFF;
-	grid-area: center;
+	margin: auto;
+	/**/
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
-
 .new-room-form {
-	grid-area: center;
+	margin: auto;
+}
+.left-side-container {
+	flex-basis: 450px;
+}
+.infinite-rooms-list-container {
+	flex-basis: 450px;
+	/**/
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.room-list-entry {
+	background: #ECF4FF;
+	display: flex;
+	height: 40px;
+	width: 300px;
+	margin: 5px;
+}
+.room-link {
+	margin: auto;
 }
 
-.infinite-container {
-	background: #E6FCFF;
-	grid-area: right;
-	text-align: center;
+.playlist {
+	width: 640px;
+}
+.artist_name {
+	font-weight: bold;
 }
 
+.users {
+}
 
-
+.root {
+	flex-grow: 1;
+}

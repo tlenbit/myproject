@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main-6b5fefd02bdef3efca0e.js","path":"/home/cristo/django-project/myproject/assets/bundles/main-6b5fefd02bdef3efca0e.js"}]}}
+{"status":"done","chunks":{"Room":[{"name":"Room-68d179c2e3f527a2016a.js","path":"/home/cristo/django-project/myproject/rooms/static/bundles/Room-68d179c2e3f527a2016a.js"}],"AdminRoom":[{"name":"AdminRoom-68d179c2e3f527a2016a.js","path":"/home/cristo/django-project/myproject/rooms/static/bundles/AdminRoom-68d179c2e3f527a2016a.js"}]}}

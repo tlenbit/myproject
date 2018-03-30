@@ -3,11 +3,11 @@
 {% load render_bundle from webpack_loader %}
 
 {% block title %}
-{{ room.name }}
+{{ room.name }} admin
 {% endblock %}
 
-{% block body %}	    
+{% block body %} 
 <div id="root">
 </div>
-{% render_bundle 'Room' %}
+{% render_bundle 'AdminRoom' %}
 {% endblock %}

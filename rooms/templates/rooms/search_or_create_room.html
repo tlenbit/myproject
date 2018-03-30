@@ -2,35 +2,35 @@
 
 
 {% block body %}
-<div class="main-grid-container">
-	<div class="search-room-form">
-		<form method="POST">
-			{% csrf_token %}
-			{{ search_room_form.as_p }}
-			{{ form.errors }}
-			<input type="submit" value="enter">
-		</form>
+	<div class="left-side-container">
 	</div>
-	<div class="new-room-form">
-		<form action="{% url 'rooms:new_room' %}" method="GET">
-			<input type="submit" value="new room">
-		</form>
+	<div class="search-or-enter-container">
+		<div class="search-and-new-forms">
+			<form method="POST" class="search-room-form" >
+				{% csrf_token %}
+				{{ search_room_form.as_p }}
+				{{ form.errors }}
+				<input type="submit" class="btn btn-primary" value="enter" />
+			</form>
+			<form class="new-room-form" action="{% url 'rooms:new_room' %}" method="GET">
+				<input type="submit" class="btn btn-default" value="new room" />
+			</form>
+		</div>
 	</div>
-	<div class="infinite-container">
+	<div class="infinite-rooms-list-container">
 		{% for room in rooms %}
 		<div class="infinite-item">
-			<p> <a href="{% url 'rooms:room' room_name=room.name %}"> {{ room.name }}</a> </p>
+			<div class="room-list-entry">
+				<a class="room-link" href="{% url 'rooms:room' room_name=room.name %}"> {{ room.name }}</a>
+			</div>
 		</div>
 		{% endfor %}
+		<a class="infinite-more-link" href="?page={{ rooms.next_page_number }}"></a>
 	</div>
-	<div class="loading" style="display: none;">
-	    Loading...
-	</div>
-	<a class="infinite-more-link" href="?page={{ rooms.next_page_number }}"></a>
-</div>
+		
 <script>
     var infinite = new Waypoint.Infinite({
-      element: $('.infinite-container')[0],
+      element: $('.infinite-rooms-list-container')[0],
       onBeforePageLoad: function () {
         $('.loading').show();
       },

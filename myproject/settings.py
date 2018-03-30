@@ -13,7 +13,7 @@ SECRET_KEY = 'ololo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = [
     '127.0.0.1'
@@ -29,10 +29,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'channels',
+    'webpack_loader',
 ]
 #'debug_toolbar',
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'assets'),
+]
 
 CHANNEL_LAYERS = {
     'default': {
@@ -72,7 +84,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -127,3 +138,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SECRET_KEY = 'kr7+&r&&srp(h+^$w0(*x-#=rw03ld_(-1k&xb4*7j6i#-*@50'
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['*']
+
+#LOGGING = {
+#    'applogfile': {
+#        'level':'DEBUG',
+#        'class':'logging.handlers.RotatingFileHandler',
+#        'filename': os.path.join(BASE_DIR, 'django.log'),
+#        'maxBytes': 1024*1024*15, # 15MB
+#        'backupCount': 10,
+#    },
+#}
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_db',
+        'USER': 'django_user',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
