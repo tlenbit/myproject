@@ -73,9 +73,6 @@ class Playlist_entry(models.Model):
         downs = self.votes.filter(activity_type='D').count()
         return ups - downs
 
-    #def __str__(self):
-    #    return track.title
-
     class Meta:
         db_table = 'playlist_entry'
 

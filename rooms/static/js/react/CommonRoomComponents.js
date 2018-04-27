@@ -74,21 +74,21 @@ import './react-select/spinner.scss';
 	    }
 	}
         render() {
+	    var artistPlaceholder = <span>Artist</span>;
+	    var trackPlaceholder = <span>Track</span>;
 	    return (
 		<div className='search'>
 		    <Select
 		        name='artistSearch'
 		        value={this.state.artistChoice}
 		        searchable={true}
+		        placeholder='<span>awdd</span>'
 		        resetValue={{value: '', label: ''}}
 		        options={this.props.artistSuggestions}
 		        onFocus={
 			    () => {
-			        //if (this.state.trackChoice.value) {
 				    console.log('artist search focused');
-				    //console.log('');
 			            this.props.getArtistSuggestions('', this.state.trackChoice.label);
-				//}
 			    } 
 			}
 		        onInputChange={
@@ -114,14 +114,13 @@ import './react-select/spinner.scss';
 		        name='trackSearch'
 		        value={this.state.trackChoice}
 		        searchable={true}
+		        placeholder={trackPlaceholder}
 		        resetValue={{value: '', label: ''}}
 		        options={this.props.trackSuggestions}
 		        onFocus={
 			    () => {
-			        //if (this.state.artistChoice.value) {
 				    console.log('track search focused');
 			            this.props.getTrackSuggestions('', this.state.artistChoice.label);
-				//}
 			    } 
 			}
 		        onInputChange={

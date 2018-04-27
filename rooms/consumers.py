@@ -36,7 +36,6 @@ def ws_message(message, room_name):
     room = Room.objects.get(name=room_name)
     processed_message = json.loads(message.content['text'])
     # U or D - up or down
-    #if processed_message.get('playlist', None).get('vote', None) is not None:
     try:
         vote(message.user,
              processed_message['playlist']['vote']['entry_id'],
@@ -45,7 +44,6 @@ def ws_message(message, room_name):
         update_info(room)
     except: 
         pass
-    #if processed_message.get('chat', None) is not None:
     try:
         broadcast_chat_message(room,
                                message.user,
@@ -90,6 +88,7 @@ def ws_message(message, room_name):
 def suggest_artists(partial_artist_name, track_choice):
     RESULTS_LEN = 10
     query_params = make_query_params(partial_artist_name)
+    result_query_set = []
     if track_choice:
         # if partial artist name is not empty use FTS
         # else just filter by track choice
@@ -133,6 +132,7 @@ def suggest_tracks(partial_track_title, artist_choice):
     query_params = make_query_params(partial_track_title)
     # if partial track title is not empty use FTS
     # else just filter by artist choice
+    result_query_set = []
     if artist_choice:
         if query_params != '':
             result_query_set = Track.objects.extra(
@@ -161,7 +161,6 @@ def set_next_playing_entry(room):
     if room.playing_entry:
         room.playing_entry.delete()
     top_rated_entry = get_top_rated_playlist_entry(room)
-    #if top_rated_entry is not None:
     room.playing_entry = top_rated_entry
     room.save()
 
@@ -202,7 +201,6 @@ def update_info(room):
     room_playlist = list(room.playlist_entry_set.all())
     if room_playlist == []:
         return
-    # TODO: fix track-artist relation
     # TODO: get url beforehand, get url for all tracks
     info['playlist']['playing_entry'] = {
         'title': playing_entry.track.title,
@@ -236,16 +234,13 @@ def get_youtube_video_url(search_query):
         'maxResults=1&'\
         'order=relevance&'\
         'key=AIzaSyAt3bJIrzSxR1crhuLBwXDm5qTfgm2wzBw'
-    #print(query_url)
-    #if response_data['pageInfo']['totalResults'] != 0:
-    #print(response_data)
+    print(query_url)
     try:
         response_data = json.loads(requests.get(query_url).text)
         video_id = response_data['items'][0]['id']['videoId']
         return 'https://www.youtube.com/watch?v='+video_id
     except:
-        # rick roll
-        return 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        return 'https://www.youtube.com/watch?v=2ccaHpy5Ewo'
 
 def vote(user, entry_id, U_or_D):
     entry = Playlist_entry.objects.filter(pk=entry_id).first()

@@ -139,23 +139,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-SECRET_KEY = 'kr7+&r&&srp(h+^$w0(*x-#=rw03ld_(-1k&xb4*7j6i#-*@50'
-
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
-#LOGGING = {
-#    'applogfile': {
-#        'level':'DEBUG',
-#        'class':'logging.handlers.RotatingFileHandler',
-#        'filename': os.path.join(BASE_DIR, 'django.log'),
-#        'maxBytes': 1024*1024*15, # 15MB
-#        'backupCount': 10,
-#    },
-#}
-
-
 
 DATABASES = {
     'default': {

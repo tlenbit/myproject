@@ -50,9 +50,6 @@ import ReactDOM from 'react-dom';
 			});
 
 		    }
-		    //if (this.state.playingEntry.id == -1) {
-		        //this.setNextPlayingEntry();
-		    //}
                 }
 	    }
 	}
@@ -79,7 +76,6 @@ import ReactDOM from 'react-dom';
 	getArtistSuggestions(partialArtistName, trackChoice) {
 	    //console.log(this.state.artistSearchSuggestions);
 	    let info = {}
-	    //info['search']['partial_track_title'] = partialTrackTitle;
 	    info['search'] = {};
 	    info['search']['get_artist_suggestions'] = {}
 	    info['search']['get_artist_suggestions']['partial_artist_name'] = partialArtistName;
@@ -89,7 +85,6 @@ import ReactDOM from 'react-dom';
         getTrackSuggestions(partialTrackTitle, artistChoice) {
 	    //console.log(this.state.artistSearchSuggestions);
 	    let info = {}
-	    //info['search']['partial_track_title'] = partialTrackTitle;
 	    info['search'] = {};
 	    info['search']['get_track_suggestions'] = {}
 	    info['search']['get_track_suggestions']['partial_track_title'] = partialTrackTitle;
