@@ -1,3 +1,6 @@
+The app is intended to share playlists (host is playing top track in real life) for people who are physically in the same room with ability to vote for tracks and add new ones
+
+
 ''' copy artist and tracks data from musicbrainz db csv dump: '''
 sudo su - postgres
 \connect musicbrainz
@@ -40,8 +43,8 @@ CREATE INDEX track_title_simple_fts_idx ON track USING GIN (to_tsvector('simple'
 join artist, track and artist_track, then delete duplicate (title, name) pairs
 https://wiki.postgresql.org/wiki/Deleting_duplicates
 then normalize again
-insert into artist (id, name) select distinct artist_id, name from huartist_huetrack;
-insert into track (id, title) select distinct track_id, title from huartist_huetrack;
+insert into artist (id, name) select distinct artist_id, name from artist_track_tmp;
+insert into track (id, title) select distinct track_id, title from artist_track_tmp;
 
 
 
